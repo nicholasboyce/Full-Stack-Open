@@ -17,10 +17,20 @@ const Feedback = (props) => {
   )
 }
 
+const StatisticLine = ({text, value}) => {
+  let symbol = '';
+  if (text === "positive") {
+    symbol = '%'
+  }
+  return (
+    <p>{text} {value} {symbol}</p>
+  )
+}
+
 const Statistics = (props) => {
   const {good, neutral, bad} = props.counts;
   const total = good + neutral + bad;
-  const average = total / 3;
+  const average = ((good * 1) + (bad * -1)) / total;
   const positive = (good / total) * 100;
 
   if (!good && !neutral && !bad) {
@@ -32,12 +42,12 @@ const Statistics = (props) => {
   return (
     <>
       <h1>statistics</h1>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {total}</p>
-      <p>average {average}</p>
-      <p>positive {positive} %</p>
+      <StatisticLine text="good" value={good} />
+      <StatisticLine text="neutral" value={neutral} />
+      <StatisticLine text="bad" value={bad} />
+      <StatisticLine text="all" value={total} />
+      <StatisticLine text="average" value={average} />
+      <StatisticLine text="positive" value={positive} />
     </>
   )
 }
