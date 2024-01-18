@@ -19,12 +19,19 @@ const Feedback = (props) => {
 
 const Statistics = (props) => {
   const {good, neutral, bad} = props.counts;
+  const total = good + neutral + bad;
+  const average = total / 3;
+  const positive = (good / total) * 100;
+
   return (
     <>
       <h1>statistics</h1>
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
+      <p>all {total}</p>
+      <p>average {average}</p>
+      <p>positive {positive} %</p>
     </>
   )
 }
