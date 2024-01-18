@@ -23,6 +23,12 @@ const Statistics = (props) => {
   const average = total / 3;
   const positive = (good / total) * 100;
 
+  if (!good && !neutral && !bad) {
+    return (
+      <p>No feedback given</p>
+    )
+  }
+
   return (
     <>
       <h1>statistics</h1>
