@@ -58,12 +58,10 @@ const App = () => {
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   }
-  
-  
 
   const handleFilter = (event) => {
     const newList = persons.filter((person) => {
-      return (person.name.toLowerCase().startsWith(event.target.value) || person.number.startsWith(event.target.value));
+      return (person.name.toLowerCase().startsWith(event.target.value.toLowerCase()) || person.number.startsWith(event.target.value));
     }); 
     setSearchTerm(event.target.value);
     setPeopleToShow(newList);
@@ -95,6 +93,7 @@ const App = () => {
     } else if (validInput(newPerson)) {
       const newPersonsList = persons.concat(newPerson);
       setPersons(newPersonsList);
+      setPeopleToShow(newPersonsList);
       setNewName('');
       setNewNumber('');
     } else {
