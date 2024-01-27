@@ -17,14 +17,27 @@ const App = () => {
     setNewName(event.target.value);
   }
 
+  const validInput = (entry) => {
+    const candidate = JSON.stringify(entry);
+    persons.forEach(person => {
+      if (JSON.stringify(person) === candidate) {
+        return false;
+      }
+    })
+  }
+
   const handleSubmit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const newPerson = {
       name: newName
     }
-    const newPersonsList = persons.concat(newPerson);
-    setPersons(newPersonsList);
-    setNewName('');
+    if (validInput(newPerson)) {
+      const newPersonsList = persons.concat(newPerson);
+      setPersons(newPersonsList);
+      setNewName('');
+    } else {
+      alert(`${newPerson.name} is already added to the phonebook.`);
+    }
   }
 
   const peopleToShow = persons.map(person => <Person key={person.name} name={person.name} />);
