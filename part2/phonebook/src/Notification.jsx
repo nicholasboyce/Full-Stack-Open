@@ -1,10 +1,11 @@
 const Notification = (props) => {
-    const { message } = props;
+    const { message, isError } = props;
+    const messageStyle = isError ? 'error':'success';
     if (message === '') {
         return null;
     } else {
         return (
-            <div className="error">
+            <div className={messageStyle}>
                 {message}
             </div>
         )

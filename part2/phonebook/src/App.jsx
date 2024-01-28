@@ -22,7 +22,8 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [peopleToShow, setPeopleToShow] = useState(persons)
 
-  const [successMessage, setSuccessMessage] = useState('')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState(false)
 
   const fetchPersons = () => {
       getAllPersons().then(response => {
@@ -75,8 +76,9 @@ const App = () => {
         setPeopleToShow(persons.concat(createdPerson));
         setNewName('');
         setNewNumber('');
-        setSuccessMessage(`Successfully added ${createdPerson.name}!`);
-        setTimeout(() => setSuccessMessage(''), 5000);
+        setMessage(`Successfully added ${createdPerson.name}!`);
+        setError(false);
+        setTimeout(() => setMessage(''), 5000);
       });
       // const newPersonsList = persons.concat(newPerson);
     } else {
@@ -88,7 +90,11 @@ const App = () => {
           setPeopleToShow(persons.map(person => person.id !== updated.id ? person : updated));
           setNewName('');
           setNewNumber('');
-        })
+        }).catch(() => {
+          setMessage(`Information of ${target.name} has already been deleted from the server`);
+          setError(true);
+          setTimeout(() => setMessage(''), 5000);
+        });
       }
     }
   }
@@ -99,7 +105,7 @@ const App = () => {
       deletePerson(id).then(deletedPerson => {
         setPersons(persons.filter(person => person.id !== deletedPerson.id));
         setPeopleToShow(persons.filter(person => person.id !== deletedPerson.id));
-      });
+      })
     }
   }
 
@@ -107,7 +113,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification message={message} isError={error} />
       <Filter search={searchTerm} handleFilter={handleFilter} />
       <h3>Add a new</h3>
       <PersonForm name={newName} number={newNumber} nameHandler={handleNameChange} numberHandler={handleNumberChange} handleSubmit={handleSubmit} />
