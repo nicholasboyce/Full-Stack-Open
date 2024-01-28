@@ -1,38 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Persons from './Persons';
+import PersonForm from './PersonForm';
+import { getAllPersons, createNewPerson, updatePerson, deletePerson } from './PersonService';
 
-const Person = (props) => {
-  const { name, number } = props;
-  return (
-    <li>{name} {number}</li>
-  )
-}
-
-const PersonForm = (props) => {
-  const { name, number, nameHandler, numberHandler, handleSubmit} = props;
-  return (
-    <form>
-      <div>
-        name: <input value={name} onChange={nameHandler} />
-      </div>
-      <div>
-        number: <input value={number} onChange={numberHandler} />
-      </div>
-      <div>
-        <button type="submit" onClick={handleSubmit} >add</button>
-      </div>
-  </form>
-  )
-}
-
-const Persons = (props) => {
-  const { people } = props;
-  return (
-    <ul>
-      {people.map(person => <Person key={person.name} name={person.name} number={person.number} />)}
-    </ul>
-  )
-}
 
 const Filter = (props) => {
   const { search, handleFilter } = props;
@@ -53,12 +24,10 @@ const App = () => {
   const [peopleToShow, setPeopleToShow] = useState(persons)
 
   const fetchPersons = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-        setPeopleToShow(response.data)
-      })
+      getAllPersons().then(response => {
+        setPersons(response);
+        setPeopleToShow(response);
+      });
   }
 
   useEffect(fetchPersons, [])
@@ -99,11 +68,13 @@ const App = () => {
     if (newPerson.name == '') {
       alert('A name must be added.');
     } else if (validInput(newPerson)) {
-      const newPersonsList = persons.concat(newPerson);
-      setPersons(newPersonsList);
-      setPeopleToShow(newPersonsList);
-      setNewName('');
-      setNewNumber('');
+      createNewPerson(newPerson).then(createdPerson => {
+        setPersons(persons.concat(createdPerson));
+        setPeopleToShow(persons.concat(createdPerson));
+        setNewName('');
+        setNewNumber('');
+      })
+      // const newPersonsList = persons.concat(newPerson);
     } else {
       alert(`${newPerson.name} is already added to the phonebook.`);
     }
