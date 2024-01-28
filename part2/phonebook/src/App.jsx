@@ -26,10 +26,18 @@ const App = () => {
   const [error, setError] = useState(false)
 
   const fetchPersons = () => {
-      getAllPersons().then(response => {
+    let active = true;
+
+    getAllPersons().then(response => {
+      if (active) {
         setPersons(response);
         setPeopleToShow(response);
-      });
+      }
+    });
+
+    return () => {
+      active = false;
+    }
   }
 
   useEffect(fetchPersons, [])
