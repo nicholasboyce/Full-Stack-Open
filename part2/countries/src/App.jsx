@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 
+
+
 const Country = ({ data, isShowing }) => {
   const title = data.name.common;
   const capital = data.capital[0];
@@ -25,6 +27,17 @@ const Country = ({ data, isShowing }) => {
   }
 }
 
+const CountryLineItem = (props) => {
+  const { name, data } = props;
+  const [showCountry, setShowCountry] = useState(false);
+  return (
+    <li>
+      {name} <button onClick={() => setShowCountry(!showCountry)}>{showCountry ? 'hide' : 'show'}</button>
+      <Country data={data} isShowing={showCountry} />
+    </li>
+  )
+}
+
 const Countries = ({ list }) => {
   if (list.length > 10) {
     return <p>Too many countries, specify another filter</p>
@@ -33,7 +46,7 @@ const Countries = ({ list }) => {
   } else {
     return (
       <ul>
-        {list.map(country => <li key={country.name.official} >{country.name.official}<button>show</button> </li>)}
+        {list.map(country => <CountryLineItem key={country.name.official} name={country.name.official} data={country} />)}
       </ul>
     )
   }
