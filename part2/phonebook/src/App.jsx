@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Persons from './Persons';
 import PersonForm from './PersonForm';
+import Notification from './Notification';
 import { getAllPersons, createNewPerson, updatePerson, deletePerson } from './PersonService';
-
 
 const Filter = (props) => {
   const { search, handleFilter } = props;
@@ -22,6 +21,8 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [peopleToShow, setPeopleToShow] = useState(persons)
+
+  const [successMessage, setSuccessMessage] = useState('')
 
   const fetchPersons = () => {
       getAllPersons().then(response => {
@@ -74,6 +75,8 @@ const App = () => {
         setPeopleToShow(persons.concat(createdPerson));
         setNewName('');
         setNewNumber('');
+        setSuccessMessage(`Successfully added ${createdPerson.name}!`);
+        setTimeout(() => setSuccessMessage(''), 5000);
       });
       // const newPersonsList = persons.concat(newPerson);
     } else {
@@ -104,6 +107,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <Filter search={searchTerm} handleFilter={handleFilter} />
       <h3>Add a new</h3>
       <PersonForm name={newName} number={newNumber} nameHandler={handleNameChange} numberHandler={handleNumberChange} handleSubmit={handleSubmit} />

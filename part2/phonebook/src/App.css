@@ -1,0 +1,10 @@
+.error {
+    margin-block: 1rem;
+    border: 3px solid green;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    background-color: hsl(0, 0%, 75%);
+    color: darkgreen;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 1.5rem;
+}
