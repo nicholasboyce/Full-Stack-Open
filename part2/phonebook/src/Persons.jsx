@@ -9,7 +9,7 @@ const Persons = (props) => {
     const { people, handleDelete } = props;
     return (
       <ul>
-        {people.map(person => <Person key={person.name} name={person.name} number={person.number} id={person.id} handleDelete={handleDelete} />)}
+        {people.map(person => <Person key={person.id} name={person.name} number={person.number} id={person.id} handleDelete={handleDelete} />)}
       </ul>
     )
 }

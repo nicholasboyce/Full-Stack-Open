@@ -49,14 +49,15 @@ const App = () => {
   }
 
   const validInput = (entry) => {
-    const candidate = JSON.stringify(entry);
-    if (entry.name === '') return false;
+    let valid = true;
+    if (entry.name === '') return !valid;
+    const candidate = entry.name.trim().toLowerCase();
     persons.forEach(person => {
-      if (JSON.stringify(person) === candidate) {
-        return false;
+      if (person.name.trim().toLowerCase() === candidate) {
+        valid = false;
       }
-    })
-    return true;
+    });
+    return valid;
   }
 
   const handleSubmit = (event) => {
@@ -76,15 +77,27 @@ const App = () => {
       });
       // const newPersonsList = persons.concat(newPerson);
     } else {
-      alert(`${newPerson.name} is already added to the phonebook.`);
+      if(window.confirm(`${newPerson.name} is already added to the phonebook, replace the old number with the new one?`)) {
+        const target = persons.find(person => person.name.toLowerCase() === newPerson.name.toLowerCase());
+        const changedPerson = {...target, number: newPerson.number};
+        updatePerson(changedPerson.id, changedPerson).then(updated => {
+          setPersons(persons.map(person => person.id !== updated.id ? person : updated));
+          setPeopleToShow(persons.map(person => person.id !== updated.id ? person : updated));
+          setNewName('');
+          setNewNumber('');
+        })
+      }
     }
   }
 
   const handleDelete = (id) => {
-    deletePerson(id).then(deletedPerson => {
-      setPersons(persons.filter(person => person.id !== deletedPerson.id));
-      setPeopleToShow(persons.filter(person => person.id !== deletedPerson.id));
-    });
+    const target = persons.find(person => person.id === id);
+    if (window.confirm(`Delete ${target.name}?`)) {
+      deletePerson(id).then(deletedPerson => {
+        setPersons(persons.filter(person => person.id !== deletedPerson.id));
+        setPeopleToShow(persons.filter(person => person.id !== deletedPerson.id));
+      });
+    }
   }
 
 
