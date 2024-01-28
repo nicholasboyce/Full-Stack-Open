@@ -4,11 +4,27 @@ import axios from 'axios';
 
 
 const Country = ({ data, isShowing }) => {
+  const [weather, setWeather] = useState(null);
+
+  const secretKey = import.meta.env.VITE_API_KEY;
   const title = data.name.common;
   const capital = data.capital[0];
   const area = data.area;
   const languages = Object.values(data.languages);
   const flag = data.flags.svg;
+
+  useEffect(() => {
+    let valid = true;
+
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${secretKey}`)
+      .then(response => response.data)
+      .then((json) => {
+        if (valid) {
+          setWeather(json);
+        }
+      })
+  }, [capital])
 
   if (isShowing) {
     return (
@@ -22,6 +38,14 @@ const Country = ({ data, isShowing }) => {
         {languages.map(language => <li key={language}>{language}</li>)}
       </ul>
       <img src={flag} />
+      {weather && 
+      <>
+        <h2>Weather in {capital}</h2>
+        <p>temperature: {weather.main.temp - 273} Celsius</p>
+        <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`} />
+        <p>wind {weather.wind.speed}m/s</p>
+      </>
+      }
       </>
     )
   }
