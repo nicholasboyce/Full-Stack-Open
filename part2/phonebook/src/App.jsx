@@ -73,11 +73,18 @@ const App = () => {
         setPeopleToShow(persons.concat(createdPerson));
         setNewName('');
         setNewNumber('');
-      })
+      });
       // const newPersonsList = persons.concat(newPerson);
     } else {
       alert(`${newPerson.name} is already added to the phonebook.`);
     }
+  }
+
+  const handleDelete = (id) => {
+    deletePerson(id).then(deletedPerson => {
+      setPersons(persons.filter(person => person.id !== deletedPerson.id));
+      setPeopleToShow(persons.filter(person => person.id !== deletedPerson.id));
+    });
   }
 
 
@@ -88,7 +95,7 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm name={newName} number={newNumber} nameHandler={handleNameChange} numberHandler={handleNumberChange} handleSubmit={handleSubmit} />
       <h3>Numbers</h3>
-      <Persons people={peopleToShow} />
+      <Persons people={peopleToShow} handleDelete={handleDelete} />
     </div>
   )
 }
