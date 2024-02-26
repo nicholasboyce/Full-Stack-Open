@@ -79,30 +79,38 @@ const App = () => {
     if (newPerson.name == '') {
       alert('A name must be added.');
     } else if (validInput(newPerson)) {
-      createNewPerson(newPerson).then(createdPerson => {
-        setPersons(persons.concat(createdPerson));
-        setPeopleToShow(persons.concat(createdPerson));
-        setNewName('');
-        setNewNumber('');
-        setMessage(`Successfully added ${createdPerson.name}!`);
-        setError(false);
-        setTimeout(() => setMessage(''), 5000);
-      });
+      createNewPerson(newPerson)
+        .then(createdPerson => {
+          setPersons(persons.concat(createdPerson));
+          setPeopleToShow(persons.concat(createdPerson));
+          setNewName('');
+          setNewNumber('');
+          setMessage(`Successfully added ${createdPerson.name}!`);
+          setError(false);
+          setTimeout(() => setMessage(''), 5000);
+        })
+        .catch(error => {
+          setMessage(error.response.data.error);
+          setError(true);
+          console.log(error.response.data.error)
+        });
       // const newPersonsList = persons.concat(newPerson);
     } else {
       if(window.confirm(`${newPerson.name} is already added to the phonebook, replace the old number with the new one?`)) {
         const target = persons.find(person => person.name.toLowerCase() === newPerson.name.toLowerCase());
         const changedPerson = {...target, number: newPerson.number};
-        updatePerson(changedPerson.id, changedPerson).then(updated => {
-          setPersons(persons.map(person => person.id !== updated.id ? person : updated));
-          setPeopleToShow(persons.map(person => person.id !== updated.id ? person : updated));
-          setNewName('');
-          setNewNumber('');
-        }).catch(() => {
-          setMessage(`Information of ${target.name} has already been deleted from the server`);
-          setError(true);
-          setTimeout(() => setMessage(''), 5000);
-        });
+        updatePerson(changedPerson.id, changedPerson)
+          .then(updated => {
+            setPersons(persons.map(person => person.id !== updated.id ? person : updated));
+            setPeopleToShow(persons.map(person => person.id !== updated.id ? person : updated));
+            setNewName('');
+            setNewNumber('');
+          })
+          .catch((error) => {
+            setMessage(error.response.data.error);
+            setError(true);
+            setTimeout(() => setMessage(''), 5000);
+          });
       }
     }
   }
