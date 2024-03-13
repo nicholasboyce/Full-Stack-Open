@@ -37,14 +37,13 @@ describe('when there are blog posts initially saved', () => {
     });
 
     describe('creating a post request to create a new blog post', () => {
-        test('succeeds with valid data', async () => {
+        test('succeeds with complete data', async () => {
             const newPost = {
                 "title": "Plentiful Life",
                 "author": "Farro Bells", 
                 "url": "belltitout.com",  
                 "likes": 23
             }
-
 
             await api
                 .post('/api/blogs')
@@ -58,9 +57,30 @@ describe('when there are blog posts initially saved', () => {
             const titles = postsInDb.map(post => post.title);
             assert(titles.includes('Plentiful Life'));
         });
+
+        test('succeeds when likes property is missing', async () => {
+            const newPost = {
+                "title": "Plentiful Life",
+                "author": "Farro Bells", 
+                "url": "belltitout.com"
+            }
+
+            const response = await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(201)
+                .expect('Content-Type', /application\/json/);
+
+            const postsInDb = await helper.blogPostsInDb();
+            assert.strictEqual(postsInDb.length, helper.initialBlogPosts.length + 1);
+
+            const titles = postsInDb.map(post => post.title);
+            assert(titles.includes('Plentiful Life'));
+
+            assert.strictEqual(response.body.likes, 0);
+        })
     });
 });
-
 
 
 after(async () => {
