@@ -116,6 +116,38 @@ describe('when there are blog posts initially saved', () => {
             assert(!titles.includes('Plentiful Life'));
         });
     });
+
+    describe('deleting a blog post', () => {
+        const newPost = {
+            "title": "Plentiful Life",
+            "author": "Farro Bells", 
+            "url": "belltitout.com"
+        }
+
+        test('returns 204 regardless of whether id is in database', async () => {
+            const response = await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(201)
+                .expect('Content-Type', /application\/json/);
+
+            const id = response.body.id;
+
+            await api
+                .delete(`/api/blogs/${id}`)
+                .expect(204);
+            
+            const postsInDb = await helper.blogPostsInDb();
+            assert.strictEqual(postsInDb.length, helper.initialBlogPosts.length);
+
+            const titles = postsInDb.map(post => post.title);
+            assert(!titles.includes('Plentiful Life'));
+
+            await api
+                .delete(`/api/blogs/${id}`)
+                .expect(204);
+        });
+    })
 });
 
 
