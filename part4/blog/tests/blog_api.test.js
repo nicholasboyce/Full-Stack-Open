@@ -78,7 +78,43 @@ describe('when there are blog posts initially saved', () => {
             assert(titles.includes('Plentiful Life'));
 
             assert.strictEqual(response.body.likes, 0);
-        })
+        });
+
+        test('fails when title property is missing', async () => {
+            const newPost = {
+                "author": "Farro Bells", 
+                "url": "belltitout.com"
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(400);
+
+            const postsInDb = await helper.blogPostsInDb();
+            assert.strictEqual(postsInDb.length, helper.initialBlogPosts.length);
+
+            const authors = postsInDb.map(post => post.author);
+            assert(!authors.includes('Plentiful Life'));
+        });
+
+        test('fails when url property is missing', async () => {
+            const newPost = {
+                "title": "Plentiful Life",
+                "author": "Farro Bells", 
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(400);
+
+            const postsInDb = await helper.blogPostsInDb();
+            assert.strictEqual(postsInDb.length, helper.initialBlogPosts.length);
+
+            const titles = postsInDb.map(post => post.title);
+            assert(!titles.includes('Plentiful Life'));
+        });
     });
 });
 
