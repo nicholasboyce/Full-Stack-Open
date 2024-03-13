@@ -29,6 +29,11 @@ describe('when there are blog posts initially saved', () => {
 
     test('unique identifier of blog posts is their id', async () => {
         const response = await api.get('/api/blogs');
+        const posts = response.body;
+        for (const post of posts) {
+            assert(post.id !== undefined);
+            assert(post._id === undefined);
+        }
     });
 });
 
