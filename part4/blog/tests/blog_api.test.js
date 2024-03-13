@@ -5,7 +5,7 @@ const supertest = require('supertest')
 const app = require('../app')
 
 const api = supertest(app)
-const helper = require('./helper');
+const helper = require('./test_helper');
 const Blog = require('../models/blog');
 
 describe('when there are blog posts initially saved', () => {
@@ -34,6 +34,30 @@ describe('when there are blog posts initially saved', () => {
             assert(post.id !== undefined);
             assert(post._id === undefined);
         }
+    });
+
+    describe('creating a post request to create a new blog post', () => {
+        test('succeeds with valid data', async () => {
+            const newPost = {
+                "title": "Plentiful Life",
+                "author": "Farro Bells", 
+                "url": "belltitout.com",  
+                "likes": 23
+            }
+
+
+            await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(201)
+                .expect('Content-Type', /application\/json/);
+
+            const postsInDb = await helper.blogPostsInDb();
+            assert.strictEqual(postsInDb.length, helper.initialBlogPosts.length + 1);
+
+            const titles = postsInDb.map(post => post.title);
+            assert(titles.includes('Plentiful Life'));
+        });
     });
 });
 
