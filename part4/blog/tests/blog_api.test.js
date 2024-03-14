@@ -37,11 +37,6 @@ describe('when there are blog posts initially saved', () => {
     });
 
     describe('creating a post request to create a new blog post', () => {
-        beforeEach(async () => {
-            await Blog.deleteMany({});
-            await Blog.insertMany(helper.initialBlogPosts);
-        });
-
         test('succeeds with complete data', async () => {
             const newPost = {
                 "title": "Plentiful Life",
@@ -123,11 +118,6 @@ describe('when there are blog posts initially saved', () => {
     });
 
     describe('deleting a blog post', () => {
-        beforeEach(async () => {
-            await Blog.deleteMany({});
-            await Blog.insertMany(helper.initialBlogPosts);
-        });
-
         const newPost = {
             "title": "Plentiful Life",
             "author": "Farro Bells", 
@@ -160,14 +150,14 @@ describe('when there are blog posts initially saved', () => {
     });
 
     describe('updating an existing post', () => {
-        test('returns updated blog post on success', async () => {
-            const newPost = {
-                "title": "Plentiful Life",
-                "author": "Farro Bells", 
-                "url": "belltitout.com",  
-                "likes": 23
-            }
-    
+        const newPost = {
+            "title": "Plentiful Life",
+            "author": "Farro Bells", 
+            "url": "belltitout.com",  
+            "likes": 23
+        }
+
+        test('returns updated blog post on success', async () => {    
             const postResponse = await api
                 .post('/api/blogs')
                 .send(newPost)
@@ -183,6 +173,42 @@ describe('when there are blog posts initially saved', () => {
                 .expect('Content-Type', /application\/json/);
     
             assert.deepStrictEqual(patchResponse.body, {...newPost, id, likes: 24});
+        });
+
+        test('fails if id is non-existent', async () => {
+            const postResponse = await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(201)
+                .expect('Content-Type', /application\/json/);
+    
+            const id = postResponse.body.id;
+    
+            await api
+                .delete(`/api/blogs/${id}`)
+                .expect(204);
+
+            await api
+                .patch(`/api/blogs/${id}`)
+                .send({likes: 24})
+                .expect(404);
+        });
+
+        test('doesn\'t change target if update field is non-existent', async () => {
+            const postResponse = await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(201)
+                .expect('Content-Type', /application\/json/);
+    
+            const id = postResponse.body.id;
+
+            const patchResponse = await api
+                .patch(`/api/blogs/${id}`)
+                .send({plikes: 24})
+                .expect(200);
+
+            assert.deepStrictEqual(patchResponse.body, {...newPost, id});
         });
     });
 });
