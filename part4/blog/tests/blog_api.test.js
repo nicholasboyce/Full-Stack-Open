@@ -114,6 +114,24 @@ describe('when there are blog posts initially saved', () => {
             assert.strictEqual(response.body.likes, 0);
         });
 
+        test('fails without JWT', async () => {
+            const newPost = {
+                "author": "Farro Bells", 
+                "url": "belltitout.com"
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newPost)
+                .expect(401);
+
+            const postsInDb = await helper.blogPostsInDb();
+            assert.strictEqual(postsInDb.length, helper.initialBlogPosts.length);
+
+            const authors = postsInDb.map(post => post.author);
+            assert(!authors.includes('Farro Bells'));
+        });
+
         test('fails when title property is missing', async () => {
             const loggedInUser = await api
             .post('/api/login')
@@ -138,7 +156,7 @@ describe('when there are blog posts initially saved', () => {
             assert.strictEqual(postsInDb.length, helper.initialBlogPosts.length);
 
             const authors = postsInDb.map(post => post.author);
-            assert(!authors.includes('Plentiful Life'));
+            assert(!authors.includes('Farro Bells'));
         });
 
         test('fails when url property is missing', async () => {
@@ -241,6 +259,7 @@ describe('when there are blog posts initially saved', () => {
             const patchResponse = await api
                 .patch(`/api/blogs/${id}`)
                 .send({likes: 24})
+                .set(token)
                 .expect(200)
                 .expect('Content-Type', /application\/json/);
     
@@ -273,6 +292,7 @@ describe('when there are blog posts initially saved', () => {
             await api
                 .patch(`/api/blogs/${id}`)
                 .send({likes: 24})
+                .set(token)
                 .expect(404);
         });
 
@@ -297,6 +317,7 @@ describe('when there are blog posts initially saved', () => {
             const patchResponse = await api
                 .patch(`/api/blogs/${id}`)
                 .send({plikes: 24})
+                .set(token)
                 .expect(200);
 
             assert.deepStrictEqual(patchResponse.body, postResponse.body);

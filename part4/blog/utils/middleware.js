@@ -1,4 +1,6 @@
+const User = require('../models/user')
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -22,7 +24,7 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
     return response.status(400).json({ error: 'username already exists' })
   } else if (error.name ===  'JsonWebTokenError') {    
-    return response.status(400).json({ error: 'token missing or invalid' })  
+    return response.status(401).json({ error: 'token missing or invalid' })  
   }
 
   next(error)
@@ -31,8 +33,17 @@ const errorHandler = (error, request, response, next) => {
 const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')  
   if (authorization && authorization.startsWith('Bearer ')) {    
-      request.token = authorization.replace('Bearer ', '')  
+    request.token = authorization.replace('Bearer ', '')  
   }
+  next()
+}
+
+const userExtractor = async (request, response, next) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!decodedToken.id) {
+    response.status(401).json({ error: 'token invalid' })
+  }
+  request.user = await User.findById(decodedToken.id);
   next()
 }
 
@@ -40,5 +51,6 @@ module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
-  tokenExtractor
+  tokenExtractor,
+  userExtractor
 }
