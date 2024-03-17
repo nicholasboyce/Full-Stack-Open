@@ -281,6 +281,68 @@ describe('when there is initially one user in the DB', () => {
         assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1, secondGetReponse.body.length);
         assert.deepStrictEqual(secondGetReponse.body, usersAtEnd);
     });
+
+    test('creation fails with pre-used username',  async () => {
+        const usersAtStart = await helper.usersInDB();
+
+        const newUser = {
+            username: 'root',
+            name: 'sarahthekid',
+            password: 'abc123'
+        }
+
+        const response = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400);
+
+        assert.deepStrictEqual(response.body, {error: 'username already exists'});
+
+        const usersAtEnd = await helper.usersInDB();
+
+        assert.strictEqual(usersAtStart.length, usersAtEnd.length);
+    });
+
+    test('creation fails with short username',  async () => {
+        const usersAtStart = await helper.usersInDB();
+
+        const newUser = {
+            username: 'ro',
+            name: 'password',
+            password: 'abc123'
+        }
+
+        const response = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400);
+
+        assert.deepStrictEqual(response.body, {error: 'username and password must be at least 3 characters'});
+        const usersAtEnd = await helper.usersInDB();
+
+        assert.strictEqual(usersAtStart.length, usersAtEnd.length);
+    });
+
+    test('creation fails with short password',  async () => {
+        const usersAtStart = await helper.usersInDB();
+
+        const newUser = {
+            username: 'root',
+            name: 'sarahthekid',
+            password: 'ab'
+        }
+
+        const response = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400);
+        
+
+        assert.deepStrictEqual(response.body, {error: 'username and password must be at least 3 characters'});
+        const usersAtEnd = await helper.usersInDB();
+
+        assert.strictEqual(usersAtStart.length, usersAtEnd.length);
+    });
 });
 
 after(async () => {
