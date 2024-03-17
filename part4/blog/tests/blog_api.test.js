@@ -249,6 +249,38 @@ describe('when there is initially one user in the DB', () => {
         const usernames = usersAtEnd.map(user => user.username);
         assert(usernames.includes(newUser.username));
     });
+
+    test('all users can be seen from specific endpoint', async () => {
+        const usersAtStart = await helper.usersInDB();
+
+        const firstGetResponse = await api
+            .get('/api/users')
+            .expect(200)
+            .expect('Content-Type', /application\/json/);
+
+        assert.deepStrictEqual(firstGetResponse.body, usersAtStart);
+
+        const newUser = {
+            username: 'sarah1',
+            name: 'sarahthekid',
+            password: 'abc123'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/);
+
+        const secondGetReponse = await api
+            .get('/api/users')
+            .expect(200)
+            .expect('Content-Type', /application\/json/);
+
+        const usersAtEnd = await helper.usersInDB();
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1, secondGetReponse.body.length);
+        assert.deepStrictEqual(secondGetReponse.body, usersAtEnd);
+    });
 });
 
 after(async () => {
