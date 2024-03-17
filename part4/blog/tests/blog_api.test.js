@@ -39,16 +39,39 @@ describe('when there are blog posts initially saved', () => {
     });
 
     describe('creating a post request to create a new blog post', () => {
+        beforeEach(async () => {
+            await User.deleteMany({});
+
+            const passwordHash = await bcrypt.hash('sekret', 10);
+            const user = new User({
+                username: 'root',
+                name: 'rootman',
+                passwordHash
+            });
+    
+            await user.save();
+        });
+
         test('succeeds with complete data', async () => {
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            })
+            .expect(200);
+
+            const token = {'Authorization': `Bearer ${loggedInUser.body.token}`}
             const newPost = {
                 "title": "Plentiful Life",
                 "author": "Farro Bells", 
                 "url": "belltitout.com",  
-                "likes": 23
+                "likes": 23,
             }
 
             await api
                 .post('/api/blogs')
+                .set(token)
                 .send(newPost)
                 .expect(201)
                 .expect('Content-Type', /application\/json/);
@@ -61,6 +84,14 @@ describe('when there are blog posts initially saved', () => {
         });
 
         test('succeeds when likes property is missing', async () => {
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            });
+
+            const token = {Authorization: `Bearer ${loggedInUser.body.token}`}
             const newPost = {
                 "title": "Plentiful Life",
                 "author": "Farro Bells", 
@@ -70,6 +101,7 @@ describe('when there are blog posts initially saved', () => {
             const response = await api
                 .post('/api/blogs')
                 .send(newPost)
+                .set(token)
                 .expect(201)
                 .expect('Content-Type', /application\/json/);
 
@@ -83,6 +115,14 @@ describe('when there are blog posts initially saved', () => {
         });
 
         test('fails when title property is missing', async () => {
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            });
+
+            const token = {Authorization: `Bearer ${loggedInUser.body.token}`}
             const newPost = {
                 "author": "Farro Bells", 
                 "url": "belltitout.com"
@@ -91,6 +131,7 @@ describe('when there are blog posts initially saved', () => {
             await api
                 .post('/api/blogs')
                 .send(newPost)
+                .set(token)
                 .expect(400);
 
             const postsInDb = await helper.blogPostsInDb();
@@ -101,6 +142,14 @@ describe('when there are blog posts initially saved', () => {
         });
 
         test('fails when url property is missing', async () => {
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            });
+
+            const token = {Authorization: `Bearer ${loggedInUser.body.token}`}
             const newPost = {
                 "title": "Plentiful Life",
                 "author": "Farro Bells", 
@@ -109,6 +158,7 @@ describe('when there are blog posts initially saved', () => {
             await api
                 .post('/api/blogs')
                 .send(newPost)
+                .set(token)
                 .expect(400);
 
             const postsInDb = await helper.blogPostsInDb();
@@ -127,9 +177,18 @@ describe('when there are blog posts initially saved', () => {
         }
 
         test('returns 204 regardless of whether id is in database', async () => {
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            });
+
+            const token = {Authorization: `Bearer ${loggedInUser.body.token}`}
             const response = await api
                 .post('/api/blogs')
                 .send(newPost)
+                .set(token)
                 .expect(201)
                 .expect('Content-Type', /application\/json/);
 
@@ -159,10 +218,19 @@ describe('when there are blog posts initially saved', () => {
             "likes": 23
         }
 
-        test('returns updated blog post on success', async () => {    
+        test('returns updated blog post on success', async () => {   
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            });
+
+            const token = {Authorization: `Bearer ${loggedInUser.body.token}`} 
             const postResponse = await api
                 .post('/api/blogs')
                 .send(newPost)
+                .set(token)
                 .expect(201)
                 .expect('Content-Type', /application\/json/);
     
@@ -174,13 +242,22 @@ describe('when there are blog posts initially saved', () => {
                 .expect(200)
                 .expect('Content-Type', /application\/json/);
     
-            assert.deepStrictEqual(patchResponse.body, {...newPost, id, likes: 24});
+            assert.deepStrictEqual(patchResponse.body, {...postResponse.body, likes:24});
         });
 
         test('fails if id is non-existent', async () => {
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            });
+
+            const token = {Authorization: `Bearer ${loggedInUser.body.token}`}
             const postResponse = await api
                 .post('/api/blogs')
                 .send(newPost)
+                .set(token)
                 .expect(201)
                 .expect('Content-Type', /application\/json/);
     
@@ -197,9 +274,18 @@ describe('when there are blog posts initially saved', () => {
         });
 
         test('doesn\'t change target if update field is non-existent', async () => {
+            const loggedInUser = await api
+            .post('/api/login')
+            .send({
+                username: 'root',
+                password: 'sekret'
+            });
+
+            const token = {Authorization: `Bearer ${loggedInUser.body.token}`}
             const postResponse = await api
                 .post('/api/blogs')
                 .send(newPost)
+                .set(token)
                 .expect(201)
                 .expect('Content-Type', /application\/json/);
     
@@ -210,7 +296,7 @@ describe('when there are blog posts initially saved', () => {
                 .send({plikes: 24})
                 .expect(200);
 
-            assert.deepStrictEqual(patchResponse.body, {...newPost, id});
+            assert.deepStrictEqual(patchResponse.body, postResponse.body);
         });
     });
 });
