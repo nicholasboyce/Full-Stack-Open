@@ -196,6 +196,7 @@ describe('when there are blog posts initially saved', () => {
 
             await api
                 .delete(`/api/blogs/${id}`)
+                .set(token)
                 .expect(204);
             
             const postsInDb = await helper.blogPostsInDb();
@@ -206,6 +207,7 @@ describe('when there are blog posts initially saved', () => {
 
             await api
                 .delete(`/api/blogs/${id}`)
+                .set(token)
                 .expect(204);
         });
     });
@@ -265,6 +267,7 @@ describe('when there are blog posts initially saved', () => {
     
             await api
                 .delete(`/api/blogs/${id}`)
+                .set(token)
                 .expect(204);
 
             await api
