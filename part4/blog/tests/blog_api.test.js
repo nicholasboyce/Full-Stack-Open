@@ -222,6 +222,7 @@ describe('when there is initially one user in the DB', () => {
         const passwordHash = await bcrypt.hash('sekret', 10);
         const user = new User({
             username: 'root',
+            name: 'rootman',
             passwordHash
         });
 

@@ -8,7 +8,7 @@ usersRouter.post('/', async (request, response) => {
     if (username.length < 3 || password.length < 3) {
         return response.status(400).send({error: 'username and password must be at least 3 characters'});
     }
-    
+
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
@@ -24,7 +24,7 @@ usersRouter.post('/', async (request, response) => {
 });
 
 usersRouter.get('/', async (request, response) => {
-    let users = await User.find({});
+    let users = await User.find({}).populate('blogs', { url:1, title:1, author:1 });
     response.json(users);
 });
 
