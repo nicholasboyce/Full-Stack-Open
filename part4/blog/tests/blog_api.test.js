@@ -294,7 +294,8 @@ describe('when there is initially one user in the DB', () => {
         const response = await api
             .post('/api/users')
             .send(newUser)
-            .expect(400);
+            .expect(400)
+            .expect('Content-Type', /application\/json/);
 
         assert.deepStrictEqual(response.body, {error: 'username already exists'});
 
