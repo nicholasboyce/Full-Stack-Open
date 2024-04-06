@@ -1,8 +1,9 @@
 import Blog from "./Blog";
+import CreateBlogForm from "./CreateBlogForm";
 import { useState, useEffect } from "react";
 import apiService from '../services/apiService';
 
-const Blogs = ({ setUser }) => {
+const Blogs = ({ setUser, setMessage }) => {
 
     const [blogs, setBlogs] = useState(null);
 
@@ -23,12 +24,18 @@ const Blogs = ({ setUser }) => {
         setUser(null);
     }
 
+    const updateBlogStatus = (newBlogs, newMessage) => {
+        setBlogs(blogs.concat(newBlogs));
+        setMessage(newMessage);
+    }
+
     return (
         <>
+        <button type="button" onClick={handleLogout}>Log out</button>
+        <CreateBlogForm updateBlogStatus={updateBlogStatus} />
         {blogs && blogs.map(blog => {
             return <Blog key={blog.id} blog={blog} />
         })}
-        <button type="button" onClick={handleLogout}>Log out</button>
         </>
     )
 }

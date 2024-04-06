@@ -1,7 +1,7 @@
 import { useState } from "react";
 import apiService from '../services/apiService';
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = ({ setUser, setMessage }) => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -17,7 +17,8 @@ const LoginForm = ({ setUser }) => {
             apiService.setToken(userDetails.token);
             setUser(userDetails);
           } else {
-            console.log('Login failed');
+            const errorDetails = await loginResponse.json();
+            setMessage(errorDetails.error);
           }
         } catch (error) {
           console.log(error);

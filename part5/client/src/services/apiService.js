@@ -32,4 +32,17 @@ const login = async (baseUrl, credentials) => {
     return response;
 }
 
-export default { setToken, getAll, getUserBlogs, login }
+const createBlogPost = async (baseUrl, postDetails) => {
+    const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: token
+        },
+        body: JSON.stringify(postDetails)
+    });
+
+    return response;
+}
+
+export default { setToken, getAll, getUserBlogs, login, createBlogPost }
