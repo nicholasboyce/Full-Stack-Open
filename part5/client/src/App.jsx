@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import LoginForm from './components/LoginForm'
 import Blogs from './components/Blogs'
@@ -7,6 +7,13 @@ import Blogs from './components/Blogs'
 function App() {
 
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userDetails = localStorage.getItem('userDetails');
+    if (userDetails) {
+      setUser(JSON.parse(userDetails));
+    }
+  }, []);
 
   return (
     user === null
@@ -19,7 +26,7 @@ function App() {
     <>
       <h1>Blogs</h1>
       <p> {user.name} logged in</p>
-      <Blogs />
+      <Blogs setUser={setUser} />
     </>
   );
 }

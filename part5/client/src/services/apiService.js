@@ -1,10 +1,16 @@
+let token = null;
+
+const setToken = (newToken) => {
+    token = `Bearer ${newToken}`
+}
+
 const getAll = async (baseUrl) => {
     const response = await fetch(baseUrl);
     const data = await response.json();
     return data;
 }
 
-const getUserBlogs = async (baseUrl, token) => {
+const getUserBlogs = async (baseUrl) => {
     const response = await fetch(baseUrl, {
         method: 'GET',
         headers: {
@@ -15,7 +21,6 @@ const getUserBlogs = async (baseUrl, token) => {
     return data;
 }
 
-
 const login = async (baseUrl, credentials) => {
     const response = await fetch(baseUrl, {
         method: 'POST',
@@ -24,9 +29,7 @@ const login = async (baseUrl, credentials) => {
         },
         body: JSON.stringify(credentials)
     });
-    const data = await response.json();
-    console.log(data);
-    return data;
+    return response;
 }
 
-export default { getAll, getUserBlogs, login }
+export default { setToken, getAll, getUserBlogs, login }

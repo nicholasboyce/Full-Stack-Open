@@ -11,9 +11,14 @@ const LoginForm = ({ setUser }) => {
         const credentials = { username, password };
         try {
           const loginResponse = await apiService.login('/api/login', credentials);
-          loginResponse
-          ? setUser(loginResponse)
-          : console.log('Login failed');
+          if (loginResponse.status === 200) {
+            const userDetails = await loginResponse.json();
+            localStorage.setItem('userDetails', JSON.stringify(userDetails));
+            apiService.setToken(userDetails.token);
+            setUser(userDetails);
+          } else {
+            console.log('Login failed');
+          }
         } catch (error) {
           console.log(error);
         }
