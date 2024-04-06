@@ -18,7 +18,11 @@ const LoginForm = ({ setUser, setMessage }) => {
             setUser(userDetails);
           } else {
             const errorDetails = await loginResponse.json();
-            setMessage(errorDetails.error);
+            const newMessage = {
+                text: errorDetails.error,
+                status: 'error'
+            }
+            setMessage(newMessage);
           }
         } catch (error) {
           console.log(error);

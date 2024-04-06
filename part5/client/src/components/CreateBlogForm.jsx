@@ -15,7 +15,10 @@ const CreateBlogForm = ({ updateBlogStatus }) => {
             const body = await response.json();
 
             if (response.status === 201) {
-                const newMessage = `A new blog, ${body.title} by ${body.author} has been added!`;
+                const newMessage = {
+                    text: `A new blog, ${body.title} by ${body.author} has been added!`,
+                    status: 'success'
+                };
                 setTitle('');
                 setAuthor('');
                 setURL('');
