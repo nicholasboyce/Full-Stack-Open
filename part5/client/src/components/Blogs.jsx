@@ -1,6 +1,7 @@
 import Blog from "./Blog";
 import CreateBlogForm from "./CreateBlogForm";
-import { useState, useEffect } from "react";
+import ToggleBlogForm from "./ToggleBlogForm";
+import { useState, useEffect, useRef } from "react";
 import apiService from '../services/apiService';
 
 const Blogs = ({ setUser, setMessage }) => {
@@ -17,6 +18,8 @@ const Blogs = ({ setUser, setMessage }) => {
 
     }, []);
 
+    const blogFormRef = useRef();
+
     const handleLogout = (e) => {
         e.preventDefault();
         localStorage.removeItem('userDetails');
@@ -25,6 +28,7 @@ const Blogs = ({ setUser, setMessage }) => {
     }
 
     const updateBlogStatus = (newBlogs, newMessage) => {
+        blogFormRef.current.toggleVisibility();
         setBlogs(blogs.concat(newBlogs));
         setMessage(newMessage);
     }
@@ -32,7 +36,9 @@ const Blogs = ({ setUser, setMessage }) => {
     return (
         <>
         <button type="button" onClick={handleLogout}>Log out</button>
-        <CreateBlogForm updateBlogStatus={updateBlogStatus} />
+        <ToggleBlogForm ref={blogFormRef}>
+            <CreateBlogForm updateBlogStatus={updateBlogStatus} />
+        </ToggleBlogForm>
         {blogs && blogs.map(blog => {
             return <Blog key={blog.id} blog={blog} />
         })}
