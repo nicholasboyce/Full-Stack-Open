@@ -11,6 +11,7 @@ const Blogs = ({ setUser, setMessage }) => {
     useEffect(() => {
         const fetchBlogs = async () => {
             const blogsData = await apiService.getAll('/api/blogs');
+            blogsData.sort((first, second) => second.likes - first.likes);
             setBlogs(blogsData);
         }
 
