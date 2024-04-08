@@ -45,4 +45,19 @@ const createBlogPost = async (baseUrl, postDetails) => {
     return response;
 }
 
-export default { setToken, getAll, getUserBlogs, login, createBlogPost }
+const likeBlogPost = async (baseUrl, likes) => {
+    const response = await fetch(baseUrl, {
+        method: 'PATCH',
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: token
+        },
+        body: JSON.stringify({
+            likes
+        })
+    });
+
+    return response;
+}
+
+export default { setToken, getAll, getUserBlogs, login, createBlogPost, likeBlogPost }

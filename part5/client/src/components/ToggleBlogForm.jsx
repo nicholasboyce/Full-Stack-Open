@@ -4,7 +4,7 @@ const ToggleBlogForm = forwardRef((props, refs) => {
     const [showForm, setShowForm] = useState(false);
     const [buttonTextIndex, setButtonTextIndex] = useState(0);
 
-    const text = ['New note', 'Cancel'];
+    const text = ['Create new blog post', 'Cancel'];
     const toggleVisibility = () => {
         setShowForm(!showForm);
         setButtonTextIndex((buttonTextIndex + 1) % 2);
