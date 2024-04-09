@@ -1,74 +1,89 @@
-import { useState } from "react";
-import apiService from "../services/apiService";
+import { useState } from 'react'
+import apiService from '../services/apiService'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog }) => {
 
-    const [showBlog, setShowBlog] = useState(false);
-    const [buttonTextIndex, setButtonTextIndex] = useState(0);
-    const [likes, setLikes] = useState(blog.likes);
-    const text = ['View', 'Cancel'];
+  const [showBlog, setShowBlog] = useState(false)
+  const [buttonTextIndex, setButtonTextIndex] = useState(0)
+  const [likes, setLikes] = useState(blog.likes)
+  const text = ['View', 'Cancel']
 
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: 'solid',
-        borderWidth: 1,
-        marginBottom: 5
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
+  }
+
+  const buttonGroup = {
+    display: 'flex',
+    columnGap: '1rem',
+    alignItems: 'center'
+  }
+
+  const toggleVisibility = () => {
+    setShowBlog(!showBlog)
+    setButtonTextIndex((buttonTextIndex + 1) % 2)
+  }
+
+  const handleLikeClick = async () => {
+    try {
+      const response = await apiService.likeBlogPost(`/api/blogs/${blog.id}`, likes + 1)
+      const updatedBlog = await response.json()
+      setLikes(updatedBlog.likes)
+    } catch (error) {
+      console.error(error)
     }
+  }
 
-    const buttonGroup = {
-        display: 'flex',
-        columnGap: '1rem',
-        alignItems: 'center'
-    }
-
-    const toggleVisibility = () => {
-        setShowBlog(!showBlog);
-        setButtonTextIndex((buttonTextIndex + 1) % 2);
-    }
-
-    const handleLikeClick = async () => {
-        try {
-            const response = await apiService.likeBlogPost(`/api/blogs/${blog.id}`, likes + 1);
-            const updatedBlog = await response.json();
-            setLikes(updatedBlog.likes);
-        } catch (error) {
-            console.error(error);
+  const removeItem = async () => {
+    if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
+      try {
+        const response = await apiService.deleteBlogPost(`/api/blogs/${blog.id}`)
+        if (response.status !== 204) {
+          throw new Error('Deletion failed')
         }
+      } catch (error) {
+        console.error(error)
+      }
     }
+  }
 
-    const removeItem = async () => {
-        if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
-            try {
-                const response = await apiService.deleteBlogPost(`/api/blogs/${blog.id}`);
-                if (response.status !== 204) {
-                    throw new Error('Deletion failed');
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    }
-
-    return (
-        <div style={blogStyle}>
-            <div style={buttonGroup}>
-                <p>{blog.title} by {blog.author}</p>
-                <button onClick={toggleVisibility}>{text[buttonTextIndex]}</button>
-            </div>
-            {showBlog && 
+  return (
+    <div style={blogStyle}>
+      <div style={buttonGroup}>
+        <p>{blog.title} by {blog.author}</p>
+        <button onClick={toggleVisibility}>{text[buttonTextIndex]}</button>
+      </div>
+      {showBlog &&
                 <div>
-                    <p>{blog.url}</p>
-                    <div style={buttonGroup}>
-                        <p>likes: {likes}</p>
-                        <button onClick={handleLikeClick}>Like</button>
-                    </div>
-                    <p>{blog.user.username}</p>
-                    {blog.user.username === JSON.parse(localStorage.getItem('userDetails')).username && <button onClick={removeItem}>remove</button>}
+                  <p>{blog.url}</p>
+                  <div style={buttonGroup}>
+                    <p>likes: {likes}</p>
+                    <button onClick={handleLikeClick}>Like</button>
+                  </div>
+                  <p>{blog.user.username}</p>
+                  {blog.user.username === JSON.parse(localStorage.getItem('userDetails')).username && <button onClick={removeItem}>remove</button>}
                 </div>
-            }
-        </div>
-    )
+      }
+    </div>
+  )
 }
 
-export default Blog;
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    title: PropTypes.string,
+    author: PropTypes.string,
+    url: PropTypes.string,
+    likes: PropTypes.number,
+    user: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired
+    })
+  }),
+}
+
+export default Blog
