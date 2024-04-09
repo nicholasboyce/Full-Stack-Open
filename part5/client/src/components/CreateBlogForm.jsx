@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import apiService from '../services/apiService'
+import { useState } from 'react';
+import apiService from '../services/apiService';
 
 const CreateBlogForm = ({ updateBlogStatus }) => {
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setURL] = useState('')
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [url, setURL] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const data = { title, author, url }
+    e.preventDefault();
+    const data = { title, author, url };
     try {
-      const response = await apiService.createBlogPost('/api/blogs', data)
-      const body = await response.json()
+      const response = await apiService.createBlogPost('/api/blogs', data);
+      const body = await response.json();
 
       if (response.status === 201) {
         const newMessage = {
           text: `A new blog, ${body.title} by ${body.author} has been added!`,
           status: 'success'
-        }
-        setTitle('')
-        setAuthor('')
-        setURL('')
-        updateBlogStatus(body, newMessage)
+        };
+        setTitle('');
+        setAuthor('');
+        setURL('');
+        updateBlogStatus(body, newMessage);
       } else {
-        console.log(response.statusText)
+        console.log(response.statusText);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   return (
     <>
@@ -50,7 +50,7 @@ const CreateBlogForm = ({ updateBlogStatus }) => {
         <button type="submit">Create</button>
       </form>
     </>
-  )
-}
+  );
+};
 
-export default CreateBlogForm
+export default CreateBlogForm;

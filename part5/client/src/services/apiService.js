@@ -1,14 +1,14 @@
-let token = null
+let token = null;
 
 const setToken = (newToken) => {
-  token = `Bearer ${newToken}`
-}
+  token = `Bearer ${newToken}`;
+};
 
 const getAll = async (baseUrl) => {
-  const response = await fetch(baseUrl)
-  const data = await response.json()
-  return data
-}
+  const response = await fetch(baseUrl);
+  const data = await response.json();
+  return data;
+};
 
 const getUserBlogs = async (baseUrl) => {
   const response = await fetch(baseUrl, {
@@ -16,10 +16,10 @@ const getUserBlogs = async (baseUrl) => {
     headers: {
       Authorization: token,
     }
-  })
-  const data = await response.json()
-  return data
-}
+  });
+  const data = await response.json();
+  return data;
+};
 
 const login = async (baseUrl, credentials) => {
   const response = await fetch(baseUrl, {
@@ -28,9 +28,9 @@ const login = async (baseUrl, credentials) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(credentials)
-  })
-  return response
-}
+  });
+  return response;
+};
 
 const createBlogPost = async (baseUrl, postDetails) => {
   const response = await fetch(baseUrl, {
@@ -40,10 +40,10 @@ const createBlogPost = async (baseUrl, postDetails) => {
       Authorization: token
     },
     body: JSON.stringify(postDetails)
-  })
+  });
 
-  return response
-}
+  return response;
+};
 
 const likeBlogPost = async (baseUrl, likes) => {
   const response = await fetch(baseUrl, {
@@ -55,10 +55,10 @@ const likeBlogPost = async (baseUrl, likes) => {
     body: JSON.stringify({
       likes
     })
-  })
+  });
 
-  return response
-}
+  return response;
+};
 
 const deleteBlogPost = async (baseUrl) => {
   const response = await fetch(baseUrl, {
@@ -66,9 +66,9 @@ const deleteBlogPost = async (baseUrl) => {
     headers: {
       Authorization: token
     }
-  })
+  });
 
-  return response
-}
+  return response;
+};
 
-export default { setToken, getAll, getUserBlogs, login, createBlogPost, likeBlogPost, deleteBlogPost }
+export default { setToken, getAll, getUserBlogs, login, createBlogPost, likeBlogPost, deleteBlogPost };

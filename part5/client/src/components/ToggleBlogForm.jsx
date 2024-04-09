@@ -1,29 +1,29 @@
-import { forwardRef, useState, useImperativeHandle } from 'react'
+import { forwardRef, useState, useImperativeHandle } from 'react';
 
 const ToggleBlogForm = forwardRef((props, refs) => {
-  const [showForm, setShowForm] = useState(false)
-  const [buttonTextIndex, setButtonTextIndex] = useState(0)
+  const [showForm, setShowForm] = useState(false);
+  const [buttonTextIndex, setButtonTextIndex] = useState(0);
 
-  const text = ['Create new blog post', 'Cancel']
+  const text = ['Create new blog post', 'Cancel'];
   const toggleVisibility = () => {
-    setShowForm(!showForm)
-    setButtonTextIndex((buttonTextIndex + 1) % 2)
-  }
+    setShowForm(!showForm);
+    setButtonTextIndex((buttonTextIndex + 1) % 2);
+  };
 
   useImperativeHandle(refs, () => {
     return {
       toggleVisibility
-    }
-  })
+    };
+  });
 
   return (
     <>
       {showForm && props.children}
       <button onClick={toggleVisibility}>{text[buttonTextIndex]}</button>
     </>
-  )
-})
+  );
+});
 
-ToggleBlogForm.displayName = 'ToggleBlogForm'
+ToggleBlogForm.displayName = 'ToggleBlogForm';
 
-export default ToggleBlogForm
+export default ToggleBlogForm;

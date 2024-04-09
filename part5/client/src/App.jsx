@@ -1,28 +1,28 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import LoginForm from './components/LoginForm'
-import Blogs from './components/Blogs'
-import apiService from './services/apiService'
+import { useState, useEffect } from 'react';
+import './App.css';
+import LoginForm from './components/LoginForm';
+import Blogs from './components/Blogs';
+import apiService from './services/apiService';
 
 
 function App() {
 
-  const [user, setUser] = useState(null)
-  const [message, setMessage] = useState('')
+  const [user, setUser] = useState(null);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const userDetails = localStorage.getItem('userDetails')
+    const userDetails = localStorage.getItem('userDetails');
     if (userDetails) {
-      const userData = JSON.parse(userDetails)
-      apiService.setToken(userData.token)
-      setUser(userData)
+      const userData = JSON.parse(userDetails);
+      apiService.setToken(userData.token);
+      setUser(userData);
     }
-  }, [])
+  }, []);
 
   if (message) {
     setTimeout(() => {
-      setMessage('')
-    }, 5000)
+      setMessage('');
+    }, 5000);
   }
 
   return (
@@ -40,7 +40,7 @@ function App() {
         <p> {user.name} logged in</p>
         <Blogs setUser={setUser} setMessage={setMessage} />
       </>
-  )
+  );
 }
 
-export default App
+export default App;

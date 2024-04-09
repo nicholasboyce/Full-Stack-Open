@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import apiService from '../services/apiService'
-import PropTypes from 'prop-types'
+import { useState } from 'react';
+import apiService from '../services/apiService';
+import PropTypes from 'prop-types';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, username, likeUp }) => {
 
-  const [showBlog, setShowBlog] = useState(false)
-  const [buttonTextIndex, setButtonTextIndex] = useState(0)
-  const [likes, setLikes] = useState(blog.likes)
-  const text = ['View', 'Cancel']
+  const [showBlog, setShowBlog] = useState(false);
+  const [buttonTextIndex, setButtonTextIndex] = useState(0);
+  const [likes, setLikes] = useState(blog.likes);
+  const text = ['View', 'Cancel'];
 
   const blogStyle = {
     paddingTop: 10,
@@ -15,41 +15,40 @@ const Blog = ({ blog }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
-  }
+  };
 
   const buttonGroup = {
     display: 'flex',
     columnGap: '1rem',
     alignItems: 'center'
-  }
+  };
 
   const toggleVisibility = () => {
-    setShowBlog(!showBlog)
-    setButtonTextIndex((buttonTextIndex + 1) % 2)
-  }
+    setShowBlog(!showBlog);
+    setButtonTextIndex((buttonTextIndex + 1) % 2);
+  };
 
   const handleLikeClick = async () => {
     try {
-      const response = await apiService.likeBlogPost(`/api/blogs/${blog.id}`, likes + 1)
-      const updatedBlog = await response.json()
-      setLikes(updatedBlog.likes)
+      const updatedLikes = await likeUp(blog.id, likes);
+      setLikes(updatedLikes);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const removeItem = async () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
       try {
-        const response = await apiService.deleteBlogPost(`/api/blogs/${blog.id}`)
+        const response = await apiService.deleteBlogPost(`/api/blogs/${blog.id}`);
         if (response.status !== 204) {
-          throw new Error('Deletion failed')
+          throw new Error('Deletion failed');
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-  }
+  };
 
   return (
     <div style={blogStyle}>
@@ -65,12 +64,12 @@ const Blog = ({ blog }) => {
                     <button onClick={handleLikeClick}>Like</button>
                   </div>
                   <p>{blog.user.username}</p>
-                  {blog.user.username === JSON.parse(localStorage.getItem('userDetails')).username && <button onClick={removeItem}>remove</button>}
+                  {blog.user.username === username && <button onClick={removeItem}>remove</button>}
                 </div>
       }
     </div>
-  )
-}
+  );
+};
 
 Blog.propTypes = {
   blog: PropTypes.shape({
@@ -84,6 +83,6 @@ Blog.propTypes = {
       id: PropTypes.string.isRequired
     })
   }),
-}
+};
 
-export default Blog
+export default Blog;

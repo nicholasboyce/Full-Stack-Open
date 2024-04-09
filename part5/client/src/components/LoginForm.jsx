@@ -1,33 +1,33 @@
-import { useState } from 'react'
-import apiService from '../services/apiService'
+import { useState } from 'react';
+import apiService from '../services/apiService';
 
 const LoginForm = ({ setUser, setMessage }) => {
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async (e) => {
-    e.preventDefault()
-    const credentials = { username, password }
+    e.preventDefault();
+    const credentials = { username, password };
     try {
-      const loginResponse = await apiService.login('/api/login', credentials)
+      const loginResponse = await apiService.login('/api/login', credentials);
       if (loginResponse.status === 200) {
-        const userDetails = await loginResponse.json()
-        localStorage.setItem('userDetails', JSON.stringify(userDetails))
-        apiService.setToken(userDetails.token)
-        setUser(userDetails)
+        const userDetails = await loginResponse.json();
+        localStorage.setItem('userDetails', JSON.stringify(userDetails));
+        apiService.setToken(userDetails.token);
+        setUser(userDetails);
       } else {
-        const errorDetails = await loginResponse.json()
+        const errorDetails = await loginResponse.json();
         const newMessage = {
           text: errorDetails.error,
           status: 'error'
-        }
-        setMessage(newMessage)
+        };
+        setMessage(newMessage);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
 
   return (
@@ -42,7 +42,7 @@ const LoginForm = ({ setUser, setMessage }) => {
       </p>
       <button type='submit'>Login</button>
     </form>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;
