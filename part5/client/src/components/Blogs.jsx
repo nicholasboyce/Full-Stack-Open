@@ -16,7 +16,6 @@ const Blogs = ({ setUser, setMessage }) => {
         }
 
         fetchBlogs();
-
     }, []);
 
     const blogFormRef = useRef();

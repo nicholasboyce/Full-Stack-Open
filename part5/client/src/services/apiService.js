@@ -60,4 +60,15 @@ const likeBlogPost = async (baseUrl, likes) => {
     return response;
 }
 
-export default { setToken, getAll, getUserBlogs, login, createBlogPost, likeBlogPost }
+const deleteBlogPost = async (baseUrl) => {
+    const response = await fetch(baseUrl, {
+        method: 'DELETE',
+        headers: {
+            Authorization: token
+        }
+    })
+
+    return response;
+}
+
+export default { setToken, getAll, getUserBlogs, login, createBlogPost, likeBlogPost, deleteBlogPost }

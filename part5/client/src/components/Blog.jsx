@@ -37,6 +37,19 @@ const Blog = ({ blog }) => {
         }
     }
 
+    const removeItem = async () => {
+        if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
+            try {
+                const response = await apiService.deleteBlogPost(`/api/blogs/${blog.id}`);
+                if (response.status !== 204) {
+                    throw new Error('Deletion failed');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
     return (
         <div style={blogStyle}>
             <div style={buttonGroup}>
@@ -51,6 +64,7 @@ const Blog = ({ blog }) => {
                         <button onClick={handleLikeClick}>Like</button>
                     </div>
                     <p>{blog.user.username}</p>
+                    {blog.user.username === JSON.parse(localStorage.getItem('userDetails')).username && <button onClick={removeItem}>remove</button>}
                 </div>
             }
         </div>
