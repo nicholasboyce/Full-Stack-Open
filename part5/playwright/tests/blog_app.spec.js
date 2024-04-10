@@ -1,9 +1,10 @@
-const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { test, expect, beforeEach, describe } = require('@playwright/test');
+const { loginWith, createBlogPost } = require('./helper');
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
-    await request.post('http:localhost:3003/api/testing/reset')
-    await request.post('http://localhost:3003/api/users', {
+    await request.post('/api/testing/reset');
+    await request.post('/api/users', {
       data: {
         name: 'Matti Luukkainen',
         username: 'mluukkai',
@@ -11,7 +12,7 @@ describe('Blog app', () => {
       }
     });
 
-    await page.goto('http://localhost:5173');
+    await page.goto('/');
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -23,18 +24,27 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-        const loginForm = await page.getByRole('form');
-        await loginForm.getByLabel("Username").fill('mluukkai');
-        await loginForm.getByLabel("Password").fill('salainen');
-        await loginForm.getByRole("button", { name: 'Login' }).click();
+        await loginWith(page, 'mluukkai', 'salainen');
+        await page.getByText('Blogs').waitFor();
         await expect(page.getByText('Blogs')).toBeVisible();
-    }); 
+    });
+
     test('fails with wrong credentials', async ({ page }) => {
-        const loginForm = await page.getByRole('form');
-        await loginForm.getByLabel("Username").fill('mluukkai');
-        await loginForm.getByLabel("Password").fill('salutare');
-        await loginForm.getByRole("button", { name: 'Login' }).click();
+        await loginWith(page, 'mluukkai', 'salutare');
+        await page.getByText('invalid username or password').waitFor();
         await expect(page.getByText('invalid username or password')).toBeVisible();
+    });
+  });
+
+  describe('when logged in', () => {
+    beforeEach(async ({ page }) => {
+        await loginWith(page, 'mluukkai', 'salainen');
+        await page.getByText('Blogs').waitFor();
+    });
+
+    test('a new blog can be created', async ({ page }) => {
+        await createBlogPost(page, 'Marble Tiles', 'Rhiannon Parker', 'artdecostan.com');
+        await expect(page.getByText('A new blog, Marble Tiles by Rhiannon Parker has been added!')).toBeVisible();
     });
   });
 });
