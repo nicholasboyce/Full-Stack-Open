@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import apiService from '../services/apiService';
 
-const CreateBlogForm = ({ updateBlogStatus }) => {
+const CreateBlogForm = ({ updateBlogStatus, createBlogPost }) => {
 
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -11,9 +10,8 @@ const CreateBlogForm = ({ updateBlogStatus }) => {
     e.preventDefault();
     const data = { title, author, url };
     try {
-      const response = await apiService.createBlogPost('/api/blogs', data);
+      const response = await createBlogPost(data);
       const body = await response.json();
-
       if (response.status === 201) {
         const newMessage = {
           text: `A new blog, ${body.title} by ${body.author} has been added!`,

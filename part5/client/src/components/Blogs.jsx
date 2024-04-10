@@ -40,11 +40,16 @@ const Blogs = ({ setUser, setMessage }) => {
     return updatedBlog;
   };
 
+  const createBlogPost = async (data) => {
+    const response = await apiService.createBlogPost('/api/blogs', data);
+    return response;
+  };
+
   return (
     <>
       <button type="button" onClick={handleLogout}>Log out</button>
       <ToggleBlogForm ref={blogFormRef}>
-        <CreateBlogForm updateBlogStatus={updateBlogStatus} />
+        <CreateBlogForm updateBlogStatus={updateBlogStatus} createBlogPost={createBlogPost} />
       </ToggleBlogForm>
       {blogs && blogs.map(blog => {
         return <Blog key={blog.id} blog={blog} username={username} likeUp={likeUp}/>;
