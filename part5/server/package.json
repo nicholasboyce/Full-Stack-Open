@@ -8,7 +8,8 @@
     "dev": "NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "fix": "eslint --fix .",
-    "test": "NODE_ENV=test node --trace-warnings --test"
+    "test": "NODE_ENV=test node --trace-warnings --test",
+    "start:test": "NODE_ENV=test node index.js"
   },
   "keywords": [],
   "author": "",

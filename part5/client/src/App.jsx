@@ -29,7 +29,7 @@ function App() {
     user === null
       ?
       <>
-        <h1>Log into Application</h1>
+        <h1 id='login-heading'>Log into Application</h1>
         <p className={message.status}>{message.text}</p>
         <LoginForm setUser={setUser} setMessage={setMessage} />
       </>

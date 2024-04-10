@@ -31,7 +31,7 @@ const LoginForm = ({ setUser, setMessage }) => {
 
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin} aria-labelledby='login-heading'>
       <p>
         <label htmlFor='username'>Username: </label>
         <input type="text" id='username' name='username' value={username} onChange={(e) => setUsername(e.target.value)}/>

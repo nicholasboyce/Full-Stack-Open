@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 
-
 describe('<CreateBlogForm />', () => {
   let container;
   const mockUpdate = vi.fn();
