@@ -46,5 +46,21 @@ describe('Blog app', () => {
         await createBlogPost(page, 'Marble Tiles', 'Rhiannon Parker', 'artdecostan.com');
         await expect(page.getByText('A new blog, Marble Tiles by Rhiannon Parker has been added!')).toBeVisible();
     });
+
+    describe('and when there are blogs already present', () => {
+        beforeEach(async ({ page }) => {
+            await createBlogPost(page, 'Marble Tiles', 'Rhiannon Parker', 'artdecostan.com');
+        });
+
+        test('like button updates UI properly', async ({ page }) => {
+            const titleContainer = page.getByText('Marble Tiles by Rhiannon Parker', { exact: true }).locator('..');
+            await titleContainer.getByRole('button').click();
+            const likeButton = page.getByRole('button', { name: 'Like' });
+            await likeButton.click();
+            const buttonGroup = likeButton.locator('..');
+            await buttonGroup.getByText('likes: 1').waitFor();
+            await expect(buttonGroup.getByText('likes: 1')).toBeVisible();
+        });
+    });
   });
 });
