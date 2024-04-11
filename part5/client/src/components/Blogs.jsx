@@ -9,13 +9,13 @@ const Blogs = ({ setUser, setMessage }) => {
   const [blogs, setBlogs] = useState(null);
   const username = JSON.parse(localStorage.getItem('userDetails')).username;
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const blogsData = await apiService.getAll('/api/blogs');
-      blogsData.sort((first, second) => second.likes - first.likes);
-      setBlogs(blogsData);
-    };
+  const fetchBlogs = async () => {
+    const blogsData = await apiService.getAll('/api/blogs');
+    blogsData.sort((first, second) => second.likes - first.likes);
+    setBlogs(blogsData);
+  };
 
+  useEffect(() => {
     fetchBlogs();
   }, []);
 
@@ -28,9 +28,10 @@ const Blogs = ({ setUser, setMessage }) => {
     setUser(null);
   };
 
-  const updateBlogStatus = (newBlogs, newMessage) => {
+  const updateBlogStatus = async (newBlogs, newMessage) => {
     blogFormRef.current.toggleVisibility();
-    setBlogs(blogs.concat(newBlogs));
+    const concattedBlogs = blogs.concat(newBlogs);
+    setBlogs(concattedBlogs.sort((first, second) => second.likes - first.likes));
     setMessage(newMessage);
   };
 
@@ -45,6 +46,14 @@ const Blogs = ({ setUser, setMessage }) => {
     return response;
   };
 
+  const deleteBlogPost =  async (id) => {
+    const response = await apiService.deleteBlogPost(`/api/blogs/${id}`);
+    if (response.status !== 204) {
+      throw new Error('Deletion failed');
+    }
+    setBlogs(blogs.filter((blog) => blog.id !== id));
+  };
+
   return (
     <>
       <button type="button" onClick={handleLogout}>Log out</button>
@@ -52,7 +61,8 @@ const Blogs = ({ setUser, setMessage }) => {
         <CreateBlogForm updateBlogStatus={updateBlogStatus} createBlogPost={createBlogPost} />
       </ToggleBlogForm>
       {blogs && blogs.map(blog => {
-        return <Blog key={blog.id} blog={blog} username={username} likeUp={likeUp}/>;
+        console.log(blog);
+        return <Blog key={blog.id} blog={blog} username={username} likeUp={likeUp} deleteBlogPost={deleteBlogPost} />;
       })}
     </>
   );

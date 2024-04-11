@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import apiService from '../services/apiService';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, username, likeUp }) => {
+const Blog = ({ blog, username, likeUp, deleteBlogPost }) => {
 
   const [showBlog, setShowBlog] = useState(false);
   const [buttonTextIndex, setButtonTextIndex] = useState(0);
@@ -30,8 +29,8 @@ const Blog = ({ blog, username, likeUp }) => {
 
   const handleLikeClick = async () => {
     try {
-      const updatedLikes = await likeUp(blog.id, likes);
-      setLikes(updatedLikes);
+      const updatedBlog = await likeUp(blog.id, likes);
+      setLikes(updatedBlog.likes);
     } catch (error) {
       console.error(error);
     }
@@ -40,10 +39,7 @@ const Blog = ({ blog, username, likeUp }) => {
   const removeItem = async () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
       try {
-        const response = await apiService.deleteBlogPost(`/api/blogs/${blog.id}`);
-        if (response.status !== 204) {
-          throw new Error('Deletion failed');
-        }
+        await deleteBlogPost(blog.id);
       } catch (error) {
         console.error(error);
       }

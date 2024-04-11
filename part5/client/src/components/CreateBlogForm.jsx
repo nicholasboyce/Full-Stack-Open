@@ -32,7 +32,7 @@ const CreateBlogForm = ({ updateBlogStatus, createBlogPost }) => {
   return (
     <>
       <h2>Create New</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} aria-label='create-blog-form'>
         <p>
           <label htmlFor="title">Title: </label>
           <input type="text" id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)}/>

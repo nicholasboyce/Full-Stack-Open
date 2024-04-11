@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test');
-const { loginWith, createBlogPost } = require('./helper');
+const { loginWith, createBlogPost, likeBlogPost } = require('./helper');
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -53,10 +53,7 @@ describe('Blog app', () => {
         });
 
         test('like button updates UI properly', async ({ page }) => {
-            const titleContainer = page.getByText('Marble Tiles by Rhiannon Parker', { exact: true }).locator('..');
-            await titleContainer.getByRole('button').click();
-            const likeButton = page.getByRole('button', { name: 'Like' });
-            await likeButton.click();
+            const likeButton = await likeBlogPost(page, 'Marble Tiles', 'Rhiannon Parker');
             const buttonGroup = likeButton.locator('..');
             await buttonGroup.getByText('likes: 1').waitFor();
             await expect(buttonGroup.getByText('likes: 1')).toBeVisible();
@@ -71,7 +68,7 @@ describe('Blog app', () => {
             await expect(page.getByText('Marble Tiles by Rhiannon Parker', { exact: true })).toBeHidden();
         });
 
-        test('users who did not create the blog cannot see the button', async ({ page, request }) => {
+        test('users who did not create the blog cannot see the remove button', async ({ page, request }) => {
             await request.post('/api/users', {
                 data: {
                   name: 'Nina Applina',
@@ -86,6 +83,22 @@ describe('Blog app', () => {
             await titleContainer.getByRole('button').click();
             expect(page.getByRole('button', { name: 'remove' })).toBeHidden();
         });
+
+        // test('blogs appear in (descending) order of likes', async ({ page }) => {
+        //     await createBlogPost(page, 'Sailor Stars and You', 'Mamoru Chiba', 'justaguyinasuit.com');
+        //     await createBlogPost(page, 'Testing is Important, Darnit!', 'FunFun FunctionGuy', 'testingisworthit.dev');
+
+        //     const twoLikeContainer = page.getByText('Testing is Important, Darnit! by FunFun FunctionGuy', { exact: true }).locator('..');
+        //     await twoLikeContainer.getByRole('button').click();
+        //     const funLikeButton = page.getByRole('button', { name: 'Like' });
+        //     await funLikeButton.click();
+        //     await funLikeButton.click();
+
+        //     const oneLikeContainer = page.getByText('Sailor Stars and You by Mamoru Chiba', { exact: true }).locator('..');
+        //     await oneLikeContainer.getByRole('button').click();
+        //     const starLikeButton = page.getByRole('button', { name: 'Like' });
+        //     await starLikeButton.click();
+        // });
     });
   });
 });

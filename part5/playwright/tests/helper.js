@@ -15,4 +15,12 @@ const createBlogPost = async (page, title, author, url) => {
     await page.getByText(`A new blog, ${title} by ${author} has been added!`).waitFor();
 }
 
-module.exports = { loginWith, createBlogPost };
+const likeBlogPost = async (page, title, author) => {
+    const titleContainer = page.getByText(`${title} by ${author}`, { exact: true }).locator('..');
+    await titleContainer.getByRole('button').click();
+    const likeButton = titleContainer.locator('..').getByRole('button', { name: 'Like' });
+    await likeButton.click();
+    return likeButton;
+}
+
+module.exports = { loginWith, createBlogPost, likeBlogPost };
