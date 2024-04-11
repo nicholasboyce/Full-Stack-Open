@@ -53,10 +53,11 @@ describe('Blog app', () => {
         });
 
         test('like button updates UI properly', async ({ page }) => {
-            const likeButton = await likeBlogPost(page, 'Marble Tiles', 'Rhiannon Parker');
+            const likes = 1;
+            const likeButton = await likeBlogPost(page, 'Marble Tiles', 'Rhiannon Parker', likes);
             const buttonGroup = likeButton.locator('..');
-            await buttonGroup.getByText('likes: 1').waitFor();
-            await expect(buttonGroup.getByText('likes: 1')).toBeVisible();
+            await buttonGroup.getByText(`likes: ${likes}`).waitFor();
+            await expect(buttonGroup.getByText(`likes: ${likes}`)).toBeVisible();
         });
 
         test('user who created the blog can delete the blog', async ({ page }) => {
@@ -84,21 +85,27 @@ describe('Blog app', () => {
             expect(page.getByRole('button', { name: 'remove' })).toBeHidden();
         });
 
-        // test('blogs appear in (descending) order of likes', async ({ page }) => {
-        //     await createBlogPost(page, 'Sailor Stars and You', 'Mamoru Chiba', 'justaguyinasuit.com');
-        //     await createBlogPost(page, 'Testing is Important, Darnit!', 'FunFun FunctionGuy', 'testingisworthit.dev');
-
-        //     const twoLikeContainer = page.getByText('Testing is Important, Darnit! by FunFun FunctionGuy', { exact: true }).locator('..');
-        //     await twoLikeContainer.getByRole('button').click();
-        //     const funLikeButton = page.getByRole('button', { name: 'Like' });
-        //     await funLikeButton.click();
-        //     await funLikeButton.click();
-
-        //     const oneLikeContainer = page.getByText('Sailor Stars and You by Mamoru Chiba', { exact: true }).locator('..');
-        //     await oneLikeContainer.getByRole('button').click();
-        //     const starLikeButton = page.getByRole('button', { name: 'Like' });
-        //     await starLikeButton.click();
-        // });
+        test('blogs appear in (descending) order of likes', async ({ page }) => {
+            const twoLikePost = {
+                title: 'Sailor Stars and You',
+                author: 'Usagi Tsukino',
+                url: 'bunhead.org'
+            };
+            const oneLikePost = {
+                title: 'Testing is Important, Darnit!',
+                author: 'FunFun FunctionGuy',
+                url: 'testingisworthit.dev'
+            };
+            await createBlogPost(page, twoLikePost.title, twoLikePost.author, twoLikePost.url);
+            await createBlogPost(page, oneLikePost.title, oneLikePost.author, oneLikePost.url);
+            await likeBlogPost(page, twoLikePost.title, twoLikePost.author, 2);
+            await likeBlogPost(page, oneLikePost.title, oneLikePost.author, 1);
+            await page.reload();
+            const blogPosts = page.locator('[class="blog"]');
+            await expect(blogPosts.nth(0).getByText(`${twoLikePost.title} by ${twoLikePost.author}`, { exact: true })).toBeVisible();
+            await expect(blogPosts.nth(1).getByText(`${oneLikePost.title} by ${oneLikePost.author}`, { exact: true })).toBeVisible();
+            await expect(blogPosts.nth(2).getByText('Marble Tiles by Rhiannon Parker', { exact: true })).toBeVisible();
+        });
     });
   });
 });

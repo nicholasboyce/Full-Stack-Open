@@ -47,7 +47,7 @@ const Blog = ({ blog, username, likeUp, deleteBlogPost }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       <div style={buttonGroup}>
         <p>{blog.title} by {blog.author}</p>
         <button onClick={toggleVisibility}>{text[buttonTextIndex]}</button>

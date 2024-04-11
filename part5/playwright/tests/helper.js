@@ -15,11 +15,13 @@ const createBlogPost = async (page, title, author, url) => {
     await page.getByText(`A new blog, ${title} by ${author} has been added!`).waitFor();
 }
 
-const likeBlogPost = async (page, title, author) => {
+const likeBlogPost = async (page, title, author, count) => {
     const titleContainer = page.getByText(`${title} by ${author}`, { exact: true }).locator('..');
     await titleContainer.getByRole('button').click();
     const likeButton = titleContainer.locator('..').getByRole('button', { name: 'Like' });
-    await likeButton.click();
+    for (let i = 0; i < count; i++) {
+        await likeButton.click();
+    }
     return likeButton;
 }
 
