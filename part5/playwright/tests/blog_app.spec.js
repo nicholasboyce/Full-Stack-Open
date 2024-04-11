@@ -61,6 +61,31 @@ describe('Blog app', () => {
             await buttonGroup.getByText('likes: 1').waitFor();
             await expect(buttonGroup.getByText('likes: 1')).toBeVisible();
         });
+
+        test('user who created the blog can delete the blog', async ({ page }) => {
+            page.on('dialog', dialog => dialog.accept());
+            const titleContainer = page.getByText('Marble Tiles by Rhiannon Parker', { exact: true }).locator('..');
+            await titleContainer.getByRole('button').click();
+            const removeButton = page.getByRole('button', { name: 'remove' });
+            await removeButton.click();
+            await expect(page.getByText('Marble Tiles by Rhiannon Parker', { exact: true })).toBeHidden();
+        });
+
+        test('users who did not create the blog cannot see the button', async ({ page, request }) => {
+            await request.post('/api/users', {
+                data: {
+                  name: 'Nina Applina',
+                  username: 'ninalina',
+                  password: 'apples'
+                }
+            });
+
+            await page.getByRole('button', { name: "Log out" }).click();
+            await loginWith(page, "ninalina", "apples");
+            const titleContainer = page.getByText('Marble Tiles by Rhiannon Parker', { exact: true }).locator('..');
+            await titleContainer.getByRole('button').click();
+            expect(page.getByRole('button', { name: 'remove' })).toBeHidden();
+        });
     });
   });
 });
